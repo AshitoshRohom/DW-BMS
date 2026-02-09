@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========================= -->
+    <!-- DW BMS CATEGORY -->
+    <!-- ========================= -->
+    <record id="module_category_dw_bms" model="ir.module.category">
+        <field name="name">DW BMS</field>
+        <field name="description">Business Management System</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS ADMIN -->
+    <!-- ========================= -->
+    <record id="group_bms_admin" model="res.groups">
+        <field name="name">BMS Admin</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS SALES USER -->
+    <!-- ========================= -->
+    <record id="group_bms_sales" model="res.groups">
+        <field name="name">BMS Sales User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS PURCHASE USER -->
+    <!-- ========================= -->
+    <record id="group_bms_purchase" model="res.groups">
+        <field name="name">BMS Purchase User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS ACCOUNTS USER -->
+    <!-- ========================= -->
+    <record id="group_bms_accounts" model="res.groups">
+        <field name="name">BMS Accounts User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS REPORT USER -->
+    <!-- ========================= -->
+    <record id="group_bms_report" model="res.groups">
+        <field name="name">BMS Report User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+    </record>
+
+</odoo>

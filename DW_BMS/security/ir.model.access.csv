@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_bms_admin_partner,bms admin partner,base.model_res_partner,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_sales_partner,bms sales partner read,base.model_res_partner,DW_BMS.group_bms_sales,1,0,0,0
+access_bms_purchase_partner,bms purchase partner read,base.model_res_partner,DW_BMS.group_bms_purchase,1,0,0,0
