@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============================= -->
+    <!-- Product Form View -->
+    <!-- ============================= -->
+
+    <record id="view_product_form_alert_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.alert.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='detailed_type']" position="after">
+                <field name="min_alert_qty"/>
+                <field name="min_sale_price"/>
+                <field name="product_storage_location"/>
+                <field name="opening_stock_ref"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- Product Tree View -->
+    <!-- ============================= -->
+
+    <record id="view_product_tree_alert_inherit" model="ir.ui.view">
+        <field name="name">product.product.tree.alert.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+
+            <!-- Add required fields -->
+            <xpath expr="//tree" position="inside">
+                <field name="min_alert_qty"/>
+                <field name="alert_status"/>
+                <field name="is_low_stock" invisible="1"/>
+            </xpath>
+            
+            <!-- Hide Variant Values -->
+            <xpath expr="//field[@name='product_template_variant_value_ids']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+
+            <!-- Decoration -->
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-danger">is_low_stock</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- Safe Action (No Search Inherit) -->
+    <!-- ============================= -->
+
+    <record id="action_low_stock_products" model="ir.actions.act_window">
+        <!-- Renaming to generic "Products with Alert" or keeping as is but showing all? User asked to show all products -->
+        <field name="name">Product Stock Status</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">tree,form</field>
+        <!-- Removed domain to show all products -->
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_to_sell': 1}</field>
+    </record>
+
+    <menuitem
+        id="menu_low_stock_products"
+        name="Product Stock Status"
+        parent="stock.menu_stock_inventory_control"
+        action="action_low_stock_products"
+        sequence="25"/>
+
+</odoo>

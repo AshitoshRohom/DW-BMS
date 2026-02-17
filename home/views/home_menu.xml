@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_home_product_stock_status"
+        name="Product Stock Status"
+        parent="home.menu_home_root"
+        action="DW_BMS.action_low_stock_products"
+        groups="base.group_system"
+        sequence="5"/>
+</odoo>

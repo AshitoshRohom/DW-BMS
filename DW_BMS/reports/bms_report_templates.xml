@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_bms_summary_pdf" model="ir.actions.report">
+        <field name="name">BMS Summary Report</field>
+        <field name="model">bms.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">DW_BMS.report_bms_summary_template</field>
+        <field name="report_file">DW_BMS.report_bms_summary_template</field>
+        <field name="print_report_name">'BMS Summary - %s' % (object.create_date or '')</field>
+    </record>
+
+    <template id="report_bms_summary_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="report_data" t-value="docs and docs[0]._collect_data() or {}"/>
+                <div class="page">
+                    <h2>BMS Consolidated Report</h2>
+                    <p>
+                        <strong>Customer:</strong> <span t-esc="report_data['filters']['partner']"/>
+                        |
+                        <strong>Payment:</strong> <span t-esc="report_data['filters']['payment_status']"/>
+                        |
+                        <strong>User:</strong> <span t-esc="report_data['filters']['user']"/>
+                    </p>
+                    <p>
+                        <strong>Date From:</strong> <span t-esc="report_data['filters']['date_from'] or '-'"/>
+                        |
+                        <strong>Date To:</strong> <span t-esc="report_data['filters']['date_to'] or '-'"/>
+                        |
+                        <strong>Shipping:</strong> <span t-esc="report_data['filters']['shipping_status']"/>
+                    </p>
+
+                    <h3>Summary</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                            <tr><td>Total Sales</td><td><span t-esc="report_data['sale_total']"/></td></tr>
+                            <tr><td>Total Purchase</td><td><span t-esc="report_data['purchase_total']"/></td></tr>
+                            <tr><td>Payment Pending</td><td><span t-esc="report_data['payment_pending']"/></td></tr>
+                            <tr><td>Total Stock Qty</td><td><span t-esc="report_data['stock_total_qty']"/></td></tr>
+                            <tr><td>Total Stock Value</td><td><span t-esc="report_data['stock_total_value']"/></td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Total Sale by User</h3>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr><th>User</th><th>Amount</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="report_data['sale_by_user']" t-as="line">
+                                <td><span t-esc="line['user']"/></td>
+                                <td><span t-esc="line['amount']"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Bank Summary</h3>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr><th>Bank</th><th>Amount</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="report_data['bank_lines']" t-as="line">
+                                <td><span t-esc="line['bank']"/></td>
+                                <td><span t-esc="line['amount']"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
