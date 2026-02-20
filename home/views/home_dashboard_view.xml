@@ -8,11 +8,24 @@
         <field name="name">home.dashboard.form</field>
         <field name="model">home.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Home" create="false" edit="false" delete="false">
+            <form string="Home" create="false" delete="false">
                 <header>
-                    <button name="action_refresh_dashboard" string="Refresh" type="object" class="btn-primary"/>
+                    <button name="action_apply_filters" string="Apply Filters" type="object" class="btn-primary"/>
+                    <button name="action_clear_filters" string="Clear Filters" type="object"/>
+                    <button name="action_refresh_dashboard" string="Refresh" type="object"/>
                 </header>
                 <sheet>
+                    <group string="Filters">
+                        <group>
+                            <field name="filter_date_from"/>
+                            <field name="filter_date_to"/>
+                        </group>
+                        <group>
+                            <field name="filter_partner_id"/>
+                            <field name="filter_user_id"/>
+                        </group>
+                    </group>
+
                     <group string="User Panel (Only User)">
                         <group>
                             <field name="user_total_sale"/>

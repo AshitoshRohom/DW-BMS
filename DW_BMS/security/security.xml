@@ -50,4 +50,43 @@
         <field name="category_id" ref="module_category_dw_bms"/>
     </record>
 
+
+
+    <!-- ========================= -->
+    <!-- HIDE APPS MENU -->
+    <!-- ========================= -->
+    <record id="base.menu_apps" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- BMS INVENTORY USER -->
+    <!-- ========================= -->
+    <record id="group_bms_inventory" model="res.groups">
+        <field name="name">BMS Inventory User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+        <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- HIDE INVENTORY MENU -->
+    <!-- ========================= -->
+    <record id="stock.menu_stock_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin'), ref('group_bms_purchase'), ref('group_bms_inventory')])]"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- HIDE MANUFACTURING MENU -->
+    <!-- ========================= -->
+    <record id="mrp.menu_mrp_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin')])]"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- HIDE SALES MENU -->
+    <!-- ========================= -->
+    <record id="sale.sale_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin'), ref('group_bms_sales'), ref('group_bms_accounts')])]"/>
+    </record>
+
 </odoo>

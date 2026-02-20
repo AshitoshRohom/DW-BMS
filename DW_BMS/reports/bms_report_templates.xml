@@ -1,71 +1,315 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="action_bms_summary_pdf" model="ir.actions.report">
-        <field name="name">BMS Summary Report</field>
+        <field name="name">BMS Report</field>
         <field name="model">bms.report.wizard</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">DW_BMS.report_bms_summary_template</field>
         <field name="report_file">DW_BMS.report_bms_summary_template</field>
-        <field name="print_report_name">'BMS Summary - %s' % (object.create_date or '')</field>
+        <field name="print_report_name">'%s - %s' % (object.report_type or 'Report', object.create_date or '')</field>
     </record>
 
     <template id="report_bms_summary_template">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
-                <t t-set="report_data" t-value="docs and docs[0]._collect_data() or {}"/>
+            <t t-foreach="docs" t-as="o">
+                <t t-set="report_data" t-value="o._collect_data()"/>
+                <t t-set="company" t-value="o.env.company"/>
                 <div class="page">
-                    <h2>BMS Consolidated Report</h2>
-                    <p>
-                        <strong>Customer:</strong> <span t-esc="report_data['filters']['partner']"/>
-                        |
-                        <strong>Payment:</strong> <span t-esc="report_data['filters']['payment_status']"/>
-                        |
-                        <strong>User:</strong> <span t-esc="report_data['filters']['user']"/>
-                    </p>
-                    <p>
-                        <strong>Date From:</strong> <span t-esc="report_data['filters']['date_from'] or '-'"/>
-                        |
-                        <strong>Date To:</strong> <span t-esc="report_data['filters']['date_to'] or '-'"/>
-                        |
-                        <strong>Shipping:</strong> <span t-esc="report_data['filters']['shipping_status']"/>
-                    </p>
+                    <style>
+                        .dw-report-header {
+                            border-bottom: 2px solid #222;
+                            padding-bottom: 10px;
+                            margin-bottom: 14px;
+                        }
+                        .dw-report-header table {
+                            width: 100%;
+                        }
+                        .dw-report-logo {
+                            width: 110px;
+                            max-height: 90px;
+                            object-fit: contain;
+                        }
+                        .dw-report-company-name {
+                            font-size: 24px;
+                            font-weight: 700;
+                            margin: 0 0 4px 0;
+                            color: #111;
+                        }
+                        .dw-report-company-detail {
+                            margin: 0;
+                            font-size: 12px;
+                            color: #333;
+                            line-height: 1.4;
+                        }
+                        .dw-report-title {
+                            margin: 0 0 8px 0;
+                            font-size: 20px;
+                            font-weight: 700;
+                            color: #111;
+                        }
+                        .dw-report-meta {
+                            border: 1px solid #cfcfcf;
+                            background: #f7f7f7;
+                            padding: 8px 10px;
+                            margin-bottom: 12px;
+                            font-size: 12px;
+                            line-height: 1.5;
+                        }
+                        .dw-report-meta strong {
+                            color: #111;
+                        }
+                    </style>
 
-                    <h3>Summary</h3>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                            <tr><td>Total Sales</td><td><span t-esc="report_data['sale_total']"/></td></tr>
-                            <tr><td>Total Purchase</td><td><span t-esc="report_data['purchase_total']"/></td></tr>
-                            <tr><td>Payment Pending</td><td><span t-esc="report_data['payment_pending']"/></td></tr>
-                            <tr><td>Total Stock Qty</td><td><span t-esc="report_data['stock_total_qty']"/></td></tr>
-                            <tr><td>Total Stock Value</td><td><span t-esc="report_data['stock_total_value']"/></td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Total Sale by User</h3>
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr><th>User</th><th>Amount</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="report_data['sale_by_user']" t-as="line">
-                                <td><span t-esc="line['user']"/></td>
-                                <td><span t-esc="line['amount']"/></td>
+                    <div class="dw-report-header">
+                        <table>
+                            <tr>
+                                <td style="width: 120px; vertical-align: top;">
+                                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="dw-report-logo" alt="Company Logo"/>
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <h1 class="dw-report-company-name" t-esc="company.name"/>
+                                    <p class="dw-report-company-detail">
+                                        <span t-esc="company.street or ''"/>
+                                        <t t-if="company.street2">, <span t-esc="company.street2"/></t>
+                                        <t t-if="company.city">, <span t-esc="company.city"/></t>
+                                        <t t-if="company.state_id">, <span t-esc="company.state_id.name"/></t>
+                                        <t t-if="company.zip"> - <span t-esc="company.zip"/></t>
+                                        <t t-if="company.country_id">, <span t-esc="company.country_id.name"/></t>
+                                    </p>
+                                    <p class="dw-report-company-detail">
+                                        <t t-if="company.phone">
+                                            <strong>Phone:</strong> <span t-esc="company.phone"/>
+                                        </t>
+                                        <t t-if="company.email">
+                                            <span t-if="company.phone"> | </span>
+                                            <strong>Email:</strong> <span t-esc="company.email"/>
+                                        </t>
+                                        <t t-if="company.website">
+                                            <span t-if="company.phone or company.email"> | </span>
+                                            <strong>Website:</strong> <span t-esc="company.website"/>
+                                        </t>
+                                    </p>
+                                </td>
                             </tr>
-                        </tbody>
-                    </table>
+                        </table>
+                    </div>
 
-                    <h3>Bank Summary</h3>
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr><th>Bank</th><th>Amount</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="report_data['bank_lines']" t-as="line">
-                                <td><span t-esc="line['bank']"/></td>
-                                <td><span t-esc="line['amount']"/></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <h2 class="dw-report-title" t-esc="report_data['title']"/>
+                    <div class="dw-report-meta">
+                        <div>
+                            <strong>Generated On:</strong>
+                            <span t-esc="report_data['generated_on']"/>
+                        </div>
+                        <div>
+                            <strong>Date Range:</strong>
+                            <span t-esc="report_data['filters']['date_from'] or '-'"/> to
+                            <span t-esc="report_data['filters']['date_to'] or '-'"/>
+                        </div>
+                        <div>
+                            <strong>Partner:</strong> <span t-esc="report_data['filters']['partner']"/>
+                            |
+                            <strong>Partner Type:</strong> <span t-esc="report_data['filters']['partner_role']"/>
+                            |
+                            <strong>User:</strong> <span t-esc="report_data['filters']['user']"/>
+                        </div>
+                        <div>
+                            <strong>Payment Status:</strong> <span t-esc="report_data['filters']['payment_status']"/>
+                            |
+                            <strong>Shipping Status:</strong> <span t-esc="report_data['filters']['shipping_status']"/>
+                        </div>
+                    </div>
+
+                    <t t-if="report_data['report_type'] == 'profit_loss'">
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><td>Sales Amount</td><td><span t-esc="report_data['sales_amount']"/></td></tr>
+                                <tr><td>Purchase Amount</td><td><span t-esc="report_data['purchase_amount']"/></td></tr>
+                                <tr><td>Profit / Loss</td><td><span t-esc="report_data['profit_loss']"/></td></tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'purchase_sales'">
+                        <h3>Summary</h3>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><td>Total Sales</td><td><span t-esc="report_data['sale_total']"/></td></tr>
+                                <tr><td>Total Purchase</td><td><span t-esc="report_data['purchase_total']"/></td></tr>
+                            </tbody>
+                        </table>
+                        <h3>Sales</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Order</th><th>Date</th><th>Customer</th><th>User</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['sale_lines']" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['date']"/></td>
+                                    <td><span t-esc="line['partner']"/></td>
+                                    <td><span t-esc="line['user']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3>Purchases</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Order</th><th>Date</th><th>Supplier</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['purchase_lines']" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['date']"/></td>
+                                    <td><span t-esc="line['partner']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'supplier_customer'">
+                        <h3>Customers</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Name</th><th>Phone</th><th>Email</th><th>Receivable</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['customer_lines']" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['phone']"/></td>
+                                    <td><span t-esc="line['email']"/></td>
+                                    <td><span t-esc="line['receivable']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3>Suppliers</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Name</th><th>Phone</th><th>Email</th><th>Payable</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['supplier_lines']" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['phone']"/></td>
+                                    <td><span t-esc="line['email']"/></td>
+                                    <td><span t-esc="line['payable']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'stock'">
+                        <h3>Summary</h3>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><td>Total Qty</td><td><span t-esc="report_data['stock_total_qty']"/></td></tr>
+                                <tr><td>Total Value</td><td><span t-esc="report_data['stock_total_value']"/></td></tr>
+                            </tbody>
+                        </table>
+                        <h3>Stock Lines</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Product</th><th>Qty</th><th>Forecast</th><th>Unit Cost</th><th>Stock Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['stock_lines']" t-as="line">
+                                    <td><span t-esc="line['product']"/></td>
+                                    <td><span t-esc="line['qty_available']"/></td>
+                                    <td><span t-esc="line['forecast_qty']"/></td>
+                                    <td><span t-esc="line['unit_cost']"/></td>
+                                    <td><span t-esc="line['stock_value']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'product_purchase'">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Product</th><th>Qty Purchased</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['product_lines']" t-as="line">
+                                    <td><span t-esc="line['product']"/></td>
+                                    <td><span t-esc="line['qty']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'product_sale_user'">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Product</th><th>User</th><th>Qty Sold</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['product_user_lines']" t-as="line">
+                                    <td><span t-esc="line['product']"/></td>
+                                    <td><span t-esc="line['user']"/></td>
+                                    <td><span t-esc="line['qty']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'purchase_payment' or report_data['report_type'] == 'sales_payment'">
+                        <h3>Summary</h3>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><td>Total Paid</td><td><span t-esc="report_data['total_paid']"/></td></tr>
+                                <tr><td>Total Pending</td><td><span t-esc="report_data['total_pending']"/></td></tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Reference</th><th>Date</th><th>Partner</th><th>Total</th><th>Paid</th><th>Pending</th><th>Payment State</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['payment_lines']" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['date']"/></td>
+                                    <td><span t-esc="line['partner']"/></td>
+                                    <td><span t-esc="line['total']"/></td>
+                                    <td><span t-esc="line['paid']"/></td>
+                                    <td><span t-esc="line['pending']"/></td>
+                                    <td><span t-esc="line['payment_state']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="report_data['report_type'] == 'bank'">
+                        <h3>Bank Summary</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Bank</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['bank_lines']" t-as="line">
+                                    <td><span t-esc="line['bank']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3>Payment Details</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr><th>Date</th><th>Payment</th><th>Bank</th><th>Partner</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="report_data['bank_detail_lines']" t-as="line">
+                                    <td><span t-esc="line['date']"/></td>
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td><span t-esc="line['bank']"/></td>
+                                    <td><span t-esc="line['partner']"/></td>
+                                    <td><span t-esc="line['amount']"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
                 </div>
             </t>
         </t>

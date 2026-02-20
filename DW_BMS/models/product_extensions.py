@@ -18,3 +18,9 @@ class ProductTemplate(models.Model):
         string="Opening Stock (Reference)",
         help="Reference field for imported opening stock. Does not affect actual inventory levels.",
     )
+    
+    unit_value = fields.Integer(
+        string="Unit",
+        default=1,
+        help="Integer unit value for product.",
+    )

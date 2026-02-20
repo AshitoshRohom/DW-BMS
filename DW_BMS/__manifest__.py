@@ -10,7 +10,8 @@
         "purchase",
         "account",
         "product",
-        "stock"
+        "stock",
+        "mrp"
     ],
     "data": [
         "security/security.xml",
@@ -22,6 +23,8 @@
         "views/account_move_view.xml",
         "views/sale_order_view.xml",
         'views/product_alert_views.xml',
+        'views/product_extensions_view.xml',
+
         "wizard/bms_report_wizard_view.xml",
         "reports/bms_report_templates.xml",
     ],

@@ -52,6 +52,17 @@
         </field>
     </record>
 
+    <record id="view_product_search_alert_inherit" model="ir.ui.view">
+        <field name="name">product.product.search.alert.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="filter_zero_on_hand_qty" string="In Hand Qty = 0" domain="[('qty_available', '=', 0)]"/>
+            </xpath>
+        </field>
+    </record>
+
 
     <!-- ============================= -->
     <!-- Safe Action (No Search Inherit) -->
@@ -65,6 +76,7 @@
         <!-- Removed domain to show all products -->
         <field name="domain">[]</field>
         <field name="context">{'search_default_filter_to_sell': 1}</field>
+        <field name="search_view_id" ref="view_product_search_alert_inherit"/>
     </record>
 
     <menuitem

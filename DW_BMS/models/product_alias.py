@@ -90,7 +90,7 @@ class ProductTemplate(models.Model):
             [("id", "in", alias_templates.ids), ("id", "not in", existing_ids)],
         ])
         extra_ids = self._search(extra_domain, limit=remaining, order=order)
-        return existing_ids + extra_ids
+        return existing_ids + list(extra_ids)
 
 
 class ProductProduct(models.Model):
@@ -133,4 +133,4 @@ class ProductProduct(models.Model):
             [("product_tmpl_id", "in", alias_templates.ids), ("id", "not in", existing_ids)],
         ])
         extra_ids = self._search(extra_domain, limit=remaining, order=order)
-        return existing_ids + extra_ids
+        return existing_ids + list(extra_ids)
