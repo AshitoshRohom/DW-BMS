@@ -18,6 +18,7 @@
         "security/record_rules.xml",
         "security/ir.model.access.csv",
         "reports/sale_quotation_custom_report.xml",
+        "reports/invoice_custom_report.xml",
         "views/res_partner_view.xml",
         "views/product_alias_view.xml",
         "views/account_move_view.xml",

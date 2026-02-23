@@ -137,3 +137,13 @@ class AccountMove(models.Model):
                 if updates:
                     super(AccountMove, move).write(updates)
         return result
+
+
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    hsn_code = fields.Char(
+        string="HSN",
+        related="product_id.l10n_in_hsn_code",
+        store=True,
+    )

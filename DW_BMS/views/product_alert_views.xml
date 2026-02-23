@@ -15,7 +15,7 @@
                 <field name="min_alert_qty"/>
                 <field name="min_sale_price"/>
                 <field name="product_storage_location"/>
-                <field name="opening_stock_ref"/>
+                <field name="opening_stock_ref" readonly="1"/>
             </xpath>
 
         </field>
