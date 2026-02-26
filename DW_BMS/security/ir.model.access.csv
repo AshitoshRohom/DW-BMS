@@ -27,6 +27,11 @@ access_bms_purchase_product,bms purchase product read,product.model_product_prod
 access_bms_purchase_product_alias,bms purchase product alias,DW_BMS.model_dw_product_name_alias,DW_BMS.group_bms_purchase,1,0,0,0
 access_bms_purchase_purchase,bms purchase order,purchase.model_purchase_order,DW_BMS.group_bms_purchase,1,1,1,0
 access_bms_purchase_bill,bms purchase bill read,account.model_account_move,DW_BMS.group_bms_purchase,1,0,0,0
+access_bms_purchase_purchase_line,bms purchase line,purchase.model_purchase_order_line,DW_BMS.group_bms_purchase,1,1,1,0
+access_bms_purchase_product_template,bms purchase product template,product.model_product_template,DW_BMS.group_bms_purchase,1,0,0,0
+access_bms_purchase_supplierinfo,bms purchase supplierinfo,product.model_product_supplierinfo,DW_BMS.group_bms_purchase,1,0,0,0
+access_bms_purchase_tax,bms purchase tax,account.model_account_tax,DW_BMS.group_bms_purchase,1,0,0,0
+access_bms_purchase_fiscal_position,bms purchase fiscal position,account.model_account_fiscal_position,DW_BMS.group_bms_purchase,1,0,0,0
 
 
 access_bms_accounts_partner,bms accounts partner read,base.model_res_partner,DW_BMS.group_bms_accounts,1,0,0,0
@@ -51,3 +56,15 @@ access_bms_sales_report_wizard,bms sales report wizard,DW_BMS.model_bms_report_w
 access_bms_purchase_report_wizard,bms purchase report wizard,DW_BMS.model_bms_report_wizard,DW_BMS.group_bms_purchase,1,1,1,0
 access_bms_accounts_report_wizard,bms accounts report wizard,DW_BMS.model_bms_report_wizard,DW_BMS.group_bms_accounts,1,1,1,0
 access_bms_report_report_wizard,bms report role wizard,DW_BMS.model_bms_report_wizard,DW_BMS.group_bms_report,1,1,1,0
+
+access_bms_admin_invoice_import_log,bms admin invoice import log,DW_BMS.model_dw_invoice_import_log,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_accounts_invoice_import_log,bms accounts invoice import log,DW_BMS.model_dw_invoice_import_log,DW_BMS.group_bms_accounts,1,1,1,0
+
+access_bms_admin_invoice_import_log_line,bms admin invoice import log line,DW_BMS.model_dw_invoice_import_log_line,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_accounts_invoice_import_log_line,bms accounts invoice import log line,DW_BMS.model_dw_invoice_import_log_line,DW_BMS.group_bms_accounts,1,1,1,0
+
+access_bms_admin_invoice_import_wizard,bms admin invoice import wizard,DW_BMS.model_dw_invoice_import_wizard,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_accounts_invoice_import_wizard,bms accounts invoice import wizard,DW_BMS.model_dw_invoice_import_wizard,DW_BMS.group_bms_accounts,1,1,1,0
+
+access_bms_admin_invoice_import_column_map,bms admin invoice import column map,DW_BMS.model_dw_invoice_import_column_map,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_accounts_invoice_import_column_map,bms accounts invoice import column map,DW_BMS.model_dw_invoice_import_column_map,DW_BMS.group_bms_accounts,1,1,1,0

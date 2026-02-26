@@ -38,6 +38,7 @@
                     <field name="bill_to_city" placeholder="City" readonly="bill_to_same_as_customer"/>
                     <field name="bill_to_state_id" placeholder="State" readonly="bill_to_same_as_customer"/>
                     <field name="bill_to_zip" placeholder="PIN Code" readonly="bill_to_same_as_customer"/>
+                    <field name="bill_to_country" placeholder="Country" readonly="bill_to_same_as_customer"/>
                 </group>
                 <group col="2" string="Ship To" invisible="move_type not in ('out_invoice', 'out_refund')">
                     <field name="ship_to_same_as_customer"/>
@@ -48,8 +49,56 @@
                     <field name="ship_to_city" placeholder="City" readonly="ship_to_same_as_customer"/>
                     <field name="ship_to_state_id" placeholder="State" readonly="ship_to_same_as_customer"/>
                     <field name="ship_to_zip" placeholder="PIN Code" readonly="ship_to_same_as_customer"/>
+                    <field name="ship_to_country" placeholder="Country" readonly="ship_to_same_as_customer"/>
                 </group>
             </xpath>
+
+            <!-- HSN + SKU + GST columns on Invoice Lines -->
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="after">
+                <field name="hsn_code" string="HSN" readonly="1" optional="show"/>
+                <field name="product_sku" string="SKU" readonly="1" optional="show"/>
+                <field name="dw_cgst_amount" string="CGST Amt" optional="show"/>
+                <field name="dw_sgst_amount" string="SGST Amt" optional="show"/>
+                <field name="dw_igst_amount" string="IGST Amt" optional="show"/>
+            </xpath>
+
+
+            <!-- ── Import Data tab ── -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Import Data" invisible="import_log_count == 0">
+                    <group string="Customer &amp; Contact">
+                        <field name="dw_customer_gstin"/>
+                        <field name="dw_contact_id"/>
+                        <field name="dw_contact_number"/>
+                    </group>
+                    <group string="Payment Info">
+                        <field name="dw_payment_mode"/>
+                        <field name="dw_bank_name"/>
+                        <field name="dw_payment_reference"/>
+                        <field name="dw_payment_date_imported"/>
+                    </group>
+                    <group string="E-Invoice">
+                        <field name="dw_irn_number"/>
+                        <field name="dw_ack_number"/>
+                        <field name="dw_ack_date"/>
+                        <field name="dw_e_invoice_amount"/>
+                    </group>
+                    <group string="E-Way Bill">
+                        <field name="dw_eway_bill_number"/>
+                        <field name="dw_eway_bill_date"/>
+                        <field name="dw_eway_bill_amount"/>
+                    </group>
+                    <group string="Misc">
+                        <field name="dw_place_of_supply"/>
+                        <field name="dw_ecommerce_platform"/>
+                        <field name="dw_platform_order_id"/>
+                        <field name="dw_grand_total_imported"/>
+                    </group>
+                    <!-- Required by invisible modifier above -->
+                    <field name="import_log_count" invisible="1"/>
+                </page>
+            </xpath>
+
         </field>
     </record>
 </odoo>
