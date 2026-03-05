@@ -23,6 +23,11 @@ class ResPartner(models.Model):
         ],
         string="Customer Type"
     )
+    customer_type_master_id = fields.Many2one(
+        "dw.customer.type",
+        string="Customer Type (Master)",
+        ondelete="set null",
+    )
 
     # ------------------------------------------------
     # STRICT UNIQUE VALIDATION

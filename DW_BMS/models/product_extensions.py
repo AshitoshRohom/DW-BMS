@@ -1,6 +1,10 @@
+import logging
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductTemplate(models.Model):
@@ -8,6 +12,7 @@ class ProductTemplate(models.Model):
 
     detailed_type = fields.Selection(default="product")
 
+    # TEMPORARY: Re-adding field to allow Odoo validation to pass while it strips the old XML views from DB
     min_sale_price = fields.Float(
         string="Min Sale Price",
         help="Minimum allowed selling price used for validation or reference.",
@@ -72,7 +77,20 @@ class ProductTemplate(models.Model):
                 "stock.location_inventory", raise_if_not_found=False
             )
         if not inventory_location:
-            raise UserError(_("Inventory loss location not found."))
+            _logger.warning(
+                "Inventory loss location missing. Falling back to quant update "
+                "for product %s (qty=%s).",
+                variant.display_name,
+                pending_qty,
+            )
+            self.env["stock.quant"].sudo().with_company(
+                variant.company_id or self.env.company
+            )._update_available_quantity(
+                variant,
+                stock_location,
+                pending_qty,
+            )
+            return
 
         move = self.env["stock.move"].sudo().create({
             "name": _("Opening Stock: %s", variant.display_name),
@@ -89,17 +107,57 @@ class ProductTemplate(models.Model):
         move.picked = True
         move._action_done()
 
+    def _get_default_stock_location(self, company):
+        """
+        Pick a reliable internal stock location for the given company.
+        """
+        company_id = company.id if company else self.env.company.id
+        location = self.env["stock.location"].sudo().search(
+            [("usage", "=", "internal"), ("company_id", "in", [company_id, False]), ("active", "=", True)],
+            order="company_id desc, id asc",
+            limit=1,
+        )
+        if not location:
+            location = self.env.ref("stock.stock_location_stock", raise_if_not_found=False)
+        return location
+
+    def _apply_opening_stock_to_template(self, product_tmpl, stock_location=None):
+        """Reliable one-shot opening stock apply for a product template."""
+        if product_tmpl.detailed_type != "product":
+            return False
+        variant = product_tmpl.product_variant_id
+        if not variant:
+            return False
+
+        qty = product_tmpl.opening_stock_ref or 0.0
+        if (
+            float_compare(
+                qty,
+                0.0,
+                precision_rounding=product_tmpl.uom_id.rounding,
+            )
+            <= 0
+        ):
+            return False
+
+        target_company = variant.company_id or self.env.company
+        target_stock_location = stock_location or self._get_default_stock_location(target_company)
+        if not target_stock_location:
+            raise UserError(_("Default stock location not found for company %s.") % (target_company.display_name,))
+
+        # Use the same stock.move flow that updates on-hand reliably.
+        self._add_opening_stock_move(variant, qty, target_stock_location)
+        product_tmpl.sudo().write({
+            "opening_stock_added_qty": (product_tmpl.opening_stock_added_qty or 0.0) + qty,
+            "opening_stock_ref": 0.0,
+        })
+        return True
+
     # ------------------------------------------------------------------
     # Single-product button  (smart button on product form)
     # ------------------------------------------------------------------
     def action_add_products_stock(self):
         """Add pending opening stock for the current product (single record)."""
-        stock_location = self.env.ref(
-            "stock.stock_location_stock", raise_if_not_found=False
-        )
-        if not stock_location:
-            raise UserError(_("Default stock location not found."))
-
         updated_count = 0
 
         for product_tmpl in self:
@@ -110,29 +168,8 @@ class ProductTemplate(models.Model):
             if product_tmpl.detailed_type != "product":
                 continue
 
-            pending_qty = (
-                (product_tmpl.opening_stock_ref or 0.0)
-                - (product_tmpl.opening_stock_added_qty or 0.0)
-            )
-            if (
-                float_compare(
-                    pending_qty,
-                    0.0,
-                    precision_rounding=product_tmpl.uom_id.rounding,
-                )
-                <= 0
-            ):
-                continue
-
-            variant = product_tmpl.product_variant_id
-            if not variant:
-                continue
-
-            self._add_opening_stock_move(variant, pending_qty, stock_location)
-            product_tmpl.sudo().write({
-                "opening_stock_added_qty": (product_tmpl.opening_stock_added_qty or 0.0) + pending_qty,
-            })
-            updated_count += 1
+            if self._apply_opening_stock_to_template(product_tmpl):
+                updated_count += 1
 
         message = _("Opening stock added for %s product(s).", updated_count)
         if not updated_count:
@@ -158,18 +195,10 @@ class ProductTemplate(models.Model):
         Called from ir.actions.server / menu.
         Searches by RAW stored fields, filters in Python.
         """
-        candidates = self.env["product.template"].sudo().search([
+        pending = self.env["product.template"].sudo().search([
             ("detailed_type", "=", "product"),
             ("opening_stock_ref", ">", 0),
         ])
-
-        pending = candidates.filtered(
-            lambda p: float_compare(
-                (p.opening_stock_ref or 0.0) - (p.opening_stock_added_qty or 0.0),
-                0.0,
-                precision_digits=2,
-            ) > 0
-        )
 
         if not pending:
             return {
@@ -190,15 +219,9 @@ class ProductTemplate(models.Model):
     def action_add_all_to_stock(self):
         """
         Batch-process all products in self.
-        Uses stock.move (Inventory → Stock) — the same mechanism Odoo 17
+        Uses stock.move (Inventory → Stock) — the same mechanism 
         uses internally for inventory adjustments.
         """
-        stock_location = self.env.ref(
-            "stock.stock_location_stock", raise_if_not_found=False
-        )
-        if not stock_location:
-            raise UserError(_("Default stock location not configured."))
-
         if not self:
             raise UserError(_("No products selected."))
 
@@ -208,19 +231,7 @@ class ProductTemplate(models.Model):
         skipped_non_storable = []
 
         for product_tmpl in self:
-            pending_qty = (
-                (product_tmpl.opening_stock_ref or 0.0)
-                - (product_tmpl.opening_stock_added_qty or 0.0)
-            )
-
-            if (
-                float_compare(
-                    pending_qty,
-                    0.0,
-                    precision_rounding=product_tmpl.uom_id.rounding,
-                )
-                <= 0
-            ):
+            if (product_tmpl.opening_stock_ref or 0.0) <= 0:
                 skipped_already_done.append(product_tmpl.name)
                 continue
 
@@ -235,29 +246,26 @@ class ProductTemplate(models.Model):
                 skipped_no_variant.append(product_tmpl.name)
                 continue
 
-            self._add_opening_stock_move(variant, pending_qty, stock_location)
-            product_tmpl.sudo().write({
-                "opening_stock_added_qty": (product_tmpl.opening_stock_added_qty or 0.0) + pending_qty,
-            })
-            updated_count += 1
+            if self._apply_opening_stock_to_template(product_tmpl):
+                updated_count += 1
 
         # ---- Build feedback message ----
         lines = []
         if updated_count:
-            lines.append(_("✅ Stock added for %s product(s).", updated_count))
+            lines.append(_(" Stock added for %s product(s).", updated_count))
         if skipped_non_storable:
             lines.append(
-                _("⚠️ Skipped (not Storable type) — %s: %s",
+                _(" Skipped (not Storable type) — %s: %s",
                   len(skipped_non_storable), ", ".join(skipped_non_storable))
             )
         if skipped_already_done:
             lines.append(
-                _("⏭️ Already processed (%s): %s", len(skipped_already_done),
+                _("⏭ Already processed (%s): %s", len(skipped_already_done),
                   ", ".join(skipped_already_done))
             )
         if skipped_no_variant:
             lines.append(
-                _("⚠️ No variant found, skipped (%s): %s",
+                _(" No variant found, skipped (%s): %s",
                   len(skipped_no_variant), ", ".join(skipped_no_variant))
             )
 

@@ -62,6 +62,9 @@ SYNONYMS = {
     "sku":                    "product_sku",
     "item_code":              "product_sku",
     "product_code":           "product_sku",
+    "product_location":       "product_storage_location",
+    "product_locations":      "product_storage_location",
+    "storage_location":       "product_storage_location",
     "hsn":                    "hsn_code",
     "hsn_sac":                "hsn_code",
     # Quantities
@@ -686,6 +689,7 @@ class DwInvoiceImportWizard(models.TransientModel):
     def _get_or_create_product(self, row):
         PP = self.env["product.product"].sudo()
         name = _safe(row.get("product_name")) or _safe(row.get("product_sku")) or "Imported Product"
+        product_location = _safe(row.get("product_storage_location"))
         hsn = _safe(row.get("hsn_code"))
         uom_name = _safe(row.get("unit_of_measure"))
 
@@ -723,6 +727,8 @@ class DwInvoiceImportWizard(models.TransientModel):
 
         p = PP.search([("name", "=ilike", name)], limit=1)
         if p:
+            if product_location:
+                p.product_tmpl_id.sudo().write({"product_storage_location": product_location})
             final_uom_id = _update_product_uom(p)
             return p, final_uom_id
 
@@ -730,6 +736,8 @@ class DwInvoiceImportWizard(models.TransientModel):
         tmpl_vals = {"name": name, "default_code": False, "type": "consu", "sale_ok": True}
         if hsn:
             tmpl_vals["l10n_in_hsn_code"] = hsn
+        if product_location:
+            tmpl_vals["product_storage_location"] = product_location
         if product_uom_id:
             tmpl_vals["uom_id"] = product_uom_id
             tmpl_vals["uom_po_id"] = product_uom_id

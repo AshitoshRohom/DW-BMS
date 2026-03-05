@@ -64,7 +64,7 @@
                 <field name="default_code" string="Internal Ref" optional="show" readonly="1"/>
                 <field name="sku" string="SKU" optional="show" readonly="1"/>
                 <field name="uom_id" string="UoM" readonly="1"/>
-                <field name="opening_stock_ref" string="Imported Qty" readonly="1"/>
+                <field name="opening_stock_ref" string="Imported Qty"/>
                 <field name="opening_stock_added_qty" string="Already Added" readonly="1"/>
                 <field name="opening_stock_pending_qty" string="Pending Qty" readonly="1"/>
                 <field name="detailed_type" column_invisible="1"/>

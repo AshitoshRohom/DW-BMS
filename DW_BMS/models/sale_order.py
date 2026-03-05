@@ -28,7 +28,7 @@ class SaleOrderLine(models.Model):
             if not line.product_id or line.display_type:
                 continue
 
-            min_allowed_price = line.product_id.product_tmpl_id.min_sale_price or line.product_id.list_price
+            min_allowed_price = line.product_id.list_price
             effective_unit_price = (line.price_unit or 0.0) * (1.0 - (line.discount or 0.0) / 100.0)
             rounding = line.order_id.currency_id.rounding or 0.01
 

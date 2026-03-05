@@ -50,11 +50,14 @@
                     }
                     .inv-logo-cell {
                         width: 30%;
-                        text-align: center;
+                        text-align: left;
+                        padding-left: 4px !important;
                     }
                     .inv-logo {
                         max-height: 90px;
                         max-width: 160px;
+                        display: block;
+                        margin-left: 4px;
                     }
                     .inv-company-cell {
                         width: 70%;

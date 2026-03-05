@@ -53,17 +53,39 @@ class ProductTemplate(models.Model):
         copy=True,
     )
 
-    def _check_sales_price_edit_access(self, vals):
+    def _check_sales_price_edit_access(self, vals, for_create=False):
+        if "list_price" not in vals:
+            return
         if self.env.su or self.env.user.has_group("DW_BMS.group_bms_admin"):
             return
-        if "list_price" in vals:
-            raise ValidationError("Only BMS Admin can change Product Sales Price.")
+        if for_create and self.env.user.has_group("DW_BMS.group_bms_sales"):
+            return
+        raise ValidationError("Only BMS Admin can change Product Sales Price.")
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            self._check_sales_price_edit_access(vals)
+            self._check_sales_price_edit_access(vals, for_create=True)
         return super().create(vals_list)
+
+    @api.model
+    def load(self, fields, data):
+        """Normalize imported cost values so empty Excel cells do not crash float parsing."""
+        if "standard_price" not in fields:
+            return super().load(fields, data)
+
+        cost_idx = fields.index("standard_price")
+        normalized_data = []
+        for row in data:
+            new_row = list(row)
+            if cost_idx < len(new_row):
+                value = new_row[cost_idx]
+                if value is None:
+                    new_row[cost_idx] = ""
+                elif isinstance(value, str) and value.strip().lower() in {"none", "null"}:
+                    new_row[cost_idx] = ""
+            normalized_data.append(new_row)
+        return super().load(fields, normalized_data)
 
     def write(self, vals):
         self._check_sales_price_edit_access(vals)
@@ -96,17 +118,39 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    def _check_sales_price_edit_access(self, vals):
+    def _check_sales_price_edit_access(self, vals, for_create=False):
+        if "list_price" not in vals:
+            return
         if self.env.su or self.env.user.has_group("DW_BMS.group_bms_admin"):
             return
-        if "list_price" in vals:
-            raise ValidationError("Only BMS Admin can change Product Sales Price.")
+        if for_create and self.env.user.has_group("DW_BMS.group_bms_sales"):
+            return
+        raise ValidationError("Only BMS Admin can change Product Sales Price.")
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            self._check_sales_price_edit_access(vals)
+            self._check_sales_price_edit_access(vals, for_create=True)
         return super().create(vals_list)
+
+    @api.model
+    def load(self, fields, data):
+        """Normalize imported cost values so empty Excel cells do not crash float parsing."""
+        if "standard_price" not in fields:
+            return super().load(fields, data)
+
+        cost_idx = fields.index("standard_price")
+        normalized_data = []
+        for row in data:
+            new_row = list(row)
+            if cost_idx < len(new_row):
+                value = new_row[cost_idx]
+                if value is None:
+                    new_row[cost_idx] = ""
+                elif isinstance(value, str) and value.strip().lower() in {"none", "null"}:
+                    new_row[cost_idx] = ""
+            normalized_data.append(new_row)
+        return super().load(fields, normalized_data)
 
     def write(self, vals):
         self._check_sales_price_edit_access(vals)

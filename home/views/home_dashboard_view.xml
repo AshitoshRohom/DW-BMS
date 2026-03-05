@@ -40,7 +40,7 @@
                         </group>
                     </group>
 
-                    <group string="Admin Panel (All)" groups="base.group_system">
+                    <group string="Admin Panel (All)" groups="DW_BMS.group_bms_admin,base.group_system">
                         <group>
                             <field name="admin_total_sale"/>
                             <field name="admin_total_purchase"/>

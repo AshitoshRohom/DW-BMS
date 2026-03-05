@@ -57,6 +57,11 @@ access_bms_purchase_report_wizard,bms purchase report wizard,DW_BMS.model_bms_re
 access_bms_accounts_report_wizard,bms accounts report wizard,DW_BMS.model_bms_report_wizard,DW_BMS.group_bms_accounts,1,1,1,0
 access_bms_report_report_wizard,bms report role wizard,DW_BMS.model_bms_report_wizard,DW_BMS.group_bms_report,1,1,1,0
 
+access_bms_manufacturing_partner,bms manufacturing partner read,base.model_res_partner,DW_BMS.group_bms_manufacturing,1,0,0,0
+access_bms_manufacturing_product,bms manufacturing product read,product.model_product_product,DW_BMS.group_bms_manufacturing,1,0,0,0
+access_bms_manufacturing_production,bms manufacturing production,mrp.model_mrp_production,DW_BMS.group_bms_manufacturing,1,1,1,0
+access_bms_manufacturing_bom,bms manufacturing bom,mrp.model_mrp_bom,DW_BMS.group_bms_manufacturing,1,1,1,0
+
 access_bms_admin_invoice_import_log,bms admin invoice import log,DW_BMS.model_dw_invoice_import_log,DW_BMS.group_bms_admin,1,1,1,1
 access_bms_accounts_invoice_import_log,bms accounts invoice import log,DW_BMS.model_dw_invoice_import_log,DW_BMS.group_bms_accounts,1,1,1,0
 
@@ -68,3 +73,11 @@ access_bms_accounts_invoice_import_wizard,bms accounts invoice import wizard,DW_
 
 access_bms_admin_invoice_import_column_map,bms admin invoice import column map,DW_BMS.model_dw_invoice_import_column_map,DW_BMS.group_bms_admin,1,1,1,1
 access_bms_accounts_invoice_import_column_map,bms accounts invoice import column map,DW_BMS.model_dw_invoice_import_column_map,DW_BMS.group_bms_accounts,1,1,1,0
+access_bms_admin_customer_type,bms admin customer type,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_admin,1,1,1,1
+access_bms_sales_customer_type,bms sales customer type,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_sales,1,1,1,0
+access_bms_purchase_customer_type,bms purchase customer type read,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_purchase,1,0,0,0
+access_bms_accounts_customer_type,bms accounts customer type read,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_accounts,1,0,0,0
+access_bms_report_customer_type,bms report customer type read,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_report,1,0,0,0
+access_bms_inventory_customer_type,bms inventory customer type read,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_inventory,1,0,0,0
+access_bms_manufacturing_customer_type,bms manufacturing customer type read,DW_BMS.model_dw_customer_type,DW_BMS.group_bms_manufacturing,1,0,0,0
+access_dw_product_storage_location_user,dw product storage location user,DW_BMS.model_dw_product_storage_location,base.group_user,1,1,1,0

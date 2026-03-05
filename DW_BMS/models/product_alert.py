@@ -14,6 +14,13 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    sku = fields.Char(
+        related="product_tmpl_id.sku",
+        string="SKU",
+        readonly=True,
+        store=True,
+    )
+
     min_alert_qty = fields.Float(
         related="product_tmpl_id.min_alert_qty",
         readonly=False,
@@ -65,7 +72,7 @@ class ProductProduct(models.Model):
 
     purchase_status = fields.Selection(
         selection=[
-            ('no_order', 'No Order'),
+            ('no_order', 'Not Ordered'),
             ('ordered', 'Ordered'),
             ('stock_received', 'Stock Received'),
         ],
@@ -93,7 +100,7 @@ class ProductProduct(models.Model):
              picking NOT yet done → status='Ordered', vendor=PO partner
           2. Confirmed PO (state='purchase') where ALL incoming pickings
              ARE done → status='Stock Received', vendor=False
-          3. No confirmed PO at all → status='No Order', vendor=False
+          3. No confirmed PO at all → status='Not Ordered', vendor=False
         """
         product_ids = self.ids
         if not product_ids:

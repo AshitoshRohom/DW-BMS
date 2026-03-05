@@ -56,5 +56,18 @@
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
+    <!-- ========================= -->
+    <!-- MANUFACTURING USER: OWN PRODUCTION ONLY -->
+    <!-- ========================= -->
+    <record id="rule_bms_manufacturing_own_production" model="ir.rule">
+        <field name="name">BMS Manufacturing: Own Production Only</field>
+        <field name="model_id" ref="mrp.model_mrp_production"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('DW_BMS.group_bms_manufacturing'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 
 </odoo>

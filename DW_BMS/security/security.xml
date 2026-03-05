@@ -53,6 +53,15 @@
         <field name="category_id" ref="module_category_dw_bms"/>
     </record>
 
+    <!-- ========================= -->
+    <!-- BMS MANUFACTURING USER -->
+    <!-- ========================= -->
+    <record id="group_bms_manufacturing" model="res.groups">
+        <field name="name">BMS Manufacturing User</field>
+        <field name="category_id" ref="module_category_dw_bms"/>
+        <field name="implied_ids" eval="[(4, ref('mrp.group_mrp_user'))]"/>
+    </record>
+
 
 
     <!-- ========================= -->
@@ -76,13 +85,15 @@
     <!-- ========================= -->
     <record id="stock.menu_stock_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin'), ref('group_bms_purchase'), ref('group_bms_inventory')])]"/>
+        <field name="sequence">7</field>
     </record>
 
     <!-- ========================= -->
     <!-- HIDE MANUFACTURING MENU -->
     <!-- ========================= -->
     <record id="mrp.menu_mrp_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin')])]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin'), ref('group_bms_manufacturing')])]"/>
+        <field name="sequence">8</field>
     </record>
 
     <!-- ========================= -->
@@ -90,6 +101,39 @@
     <!-- ========================= -->
     <record id="sale.sale_menu_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('group_bms_admin'), ref('group_bms_sales'), ref('group_bms_accounts')])]"/>
+        <field name="sequence">4</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- APP MENU ORDER -->
+    <!-- 1. Home (set in home module, not here) -->
+    <!-- 2. Discuss -->
+    <!-- 3. Contacts -->
+    <!-- 4. Sales -->
+    <!-- 5. Invoicing -->
+    <!-- 6. Purchase -->
+    <!-- 7. Inventory -->
+    <!-- 8. Manufacturing -->
+    <!-- 9. Employees -->
+    <!-- ========================= -->
+    <record id="mail.menu_root_discuss" model="ir.ui.menu">
+        <field name="sequence">2</field>
+    </record>
+
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="sequence">3</field>
+    </record>
+
+    <record id="account.menu_finance" model="ir.ui.menu">
+        <field name="sequence">5</field>
+    </record>
+
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="sequence">6</field>
+    </record>
+
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="sequence">9</field>
     </record>
 
 </odoo>

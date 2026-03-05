@@ -45,11 +45,14 @@
                         }
                         .dw-logo-box {
                             width: 34%;
-                            text-align: center;
+                            text-align: left;
+                            padding-left: 4px !important;
                         }
                         .dw-logo {
                             max-height: 100px;
                             max-width: 180px;
+                            display: block;
+                            margin-left: 4px;
                         }
                         .dw-company-box {
                             width: 66%;
@@ -143,6 +146,16 @@
                             border-top: 1px solid #222;
                             padding-top: 10px;
                             font-size: 12px;
+                        }
+                        .dw-terms-title {
+                            margin: 0 0 6px 0;
+                        }
+                        .dw-terms-list {
+                            margin: 0;
+                            padding-left: 18px;
+                        }
+                        .dw-terms-list li {
+                            margin: 0 0 4px 0;
                         }
                     </style>
 
@@ -261,12 +274,14 @@
                         </table>
 
                         <div class="dw-footer">
-                            <p><strong>Terms and Conditions:</strong></p><br/>
-                            <p>Terms and Conditions 1.</p>
-                            <p>Terms and Conditions 2.</p>
-                            <p>Terms and Conditions 3.</p>
-                            <p>Terms and Conditions 4.</p>
-                            <p>Terms and Conditions 5.</p>
+                            <p class="dw-terms-title"><strong>Terms and Conditions</strong></p>
+                            <ul class="dw-terms-list">
+                                <li>Confirmed orders cannot be cancelled.</li>
+                                <li>Dispatch will be made after payment confirmation.</li>
+                                <li>This quotation is valid for 7 days from the date of issue.</li>
+                                <li>No return or exchange after sale, except for transit damage.</li>
+                                <li>Prices are exclusive of applicable taxes and may change without notice.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

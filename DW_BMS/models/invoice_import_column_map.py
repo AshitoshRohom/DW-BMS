@@ -50,6 +50,7 @@ ODOO_FIELD_SELECTION = [
     # ── Product line ─────────────────────────────────────────────────────────
     ("product_name",     "Product Name"),
     ("product_sku",      "Product SKU"),
+    ("product_storage_location", "Product Location"),
     ("hsn_code",         "HSN Code"),
     ("quantity",         "Quantity"),
     ("unit_of_measure",  "Unit (UOM)"),

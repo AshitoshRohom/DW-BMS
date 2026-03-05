@@ -43,49 +43,7 @@
         </field>
     </record>
 
-    <record id="product_template_form_sales_price_access_inherit" model="ir.ui.view">
-        <field name="name">product.template.form.sales.price.access.inherit</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='list_price']" position="replace">
-                <field name="list_price"
-                       class="oe_inline"
-                       widget="monetary"
-                       options="{'currency_field': 'currency_id', 'field_digits': True}"
-                       groups="DW_BMS.group_bms_admin"/>
-                <field name="list_price"
-                       class="oe_inline"
-                       widget="monetary"
-                       options="{'currency_field': 'currency_id', 'field_digits': True}"
-                       readonly="1"
-                       groups="!DW_BMS.group_bms_admin"/>
-            </xpath>
-        </field>
-    </record>
 
-    <record id="product_template_tree_sales_price_access_inherit" model="ir.ui.view">
-        <field name="name">product.template.tree.sales.price.access.inherit</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_tree_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='list_price']" position="replace">
-                <field name="list_price"
-                       string="Sales Price"
-                       widget="monetary"
-                       options="{'currency_field': 'currency_id'}"
-                       optional="show"
-                       decoration-muted="not sale_ok"
-                       groups="DW_BMS.group_bms_admin"/>
-                <field name="list_price"
-                       string="Sales Price"
-                       widget="monetary"
-                       options="{'currency_field': 'currency_id'}"
-                       optional="show"
-                       decoration-muted="not sale_ok"
-                       readonly="1"
-                       groups="!DW_BMS.group_bms_admin"/>
-            </xpath>
-        </field>
-    </record>
+
+
 </odoo>

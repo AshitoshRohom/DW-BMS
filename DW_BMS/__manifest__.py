@@ -6,12 +6,16 @@
     "author": "Dreamwarez",
     "depends": [
         "base",
-        "sale",
+        "base_import",
+        "contacts",
+        "sale_management",
         "purchase",
         "account",
         "product",
         "stock",
-        "mrp"
+        "mrp",
+        "hr",
+        "l10n_in"
     ],
     "data": [
         "security/security.xml",
@@ -20,6 +24,7 @@
 
         # Sequence data
         "data/invoice_import_sequence.xml",
+        "data/customer_type_data.xml",
 
         # Reports
         "reports/sale_quotation_custom_report.xml",
@@ -27,10 +32,12 @@
 
         # Core views
         "views/res_partner_view.xml",
+        "views/customer_type_view.xml",
         "views/product_alias_view.xml",
         "views/account_move_view.xml",
         "views/sale_order_view.xml",
         "views/product_alert_views.xml",
+        "views/product_storage_location_views.xml",
         "views/product_extensions_view.xml",
 
         # Invoice Import feature

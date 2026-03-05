@@ -152,10 +152,10 @@ class HomeDashboard(models.Model):
                 partner_field="partner_id",
                 user_fields=["invoice_user_id", "create_uid"],
             )
-            admin_orderpoint_domain = company_domain + [("qty_to_order", ">", 0)]
+            admin_low_stock_domain = [("type", "=", "product"), ("qty_available", "<", 5)]
             rec._append_filters(
-                admin_orderpoint_domain,
-                rec.env["stock.warehouse.orderpoint"],
+                admin_low_stock_domain,
+                rec.env["product.product"],
                 date_field="create_date",
                 partner_field=None,
                 user_fields=["create_uid", "write_uid"],
@@ -215,10 +215,10 @@ class HomeDashboard(models.Model):
                 partner_field="partner_id",
                 user_fields=["invoice_user_id", "create_uid"],
             )
-            user_orderpoint_domain = company_domain + [("qty_to_order", ">", 0), ("create_uid", "=", user.id)]
+            user_low_stock_domain = [("type", "=", "product"), ("qty_available", "<", 5)]
             rec._append_filters(
-                user_orderpoint_domain,
-                rec.env["stock.warehouse.orderpoint"],
+                user_low_stock_domain,
+                rec.env["product.product"],
                 date_field="create_date",
                 partner_field=None,
                 user_fields=["create_uid", "write_uid"],
@@ -240,7 +240,7 @@ class HomeDashboard(models.Model):
             rec.admin_total_purchase = self._sum_amount("purchase.order", admin_purchase_domain, "amount_total")
             rec.admin_sale_payment_due = self._sum_amount("account.move", admin_sale_due_domain, "amount_residual")
             rec.admin_purchase_payment_due = self._sum_amount("account.move", admin_purchase_due_domain, "amount_residual")
-            rec.admin_stock_alert_ordered = self._count_records("stock.warehouse.orderpoint", admin_orderpoint_domain)
+            rec.admin_stock_alert_ordered = self._count_records("product.product", admin_low_stock_domain)
             rec.admin_pending_shipment = self._count_records("stock.picking", admin_shipment_domain)
             rec.admin_pending_job_work = rec._pending_job_work_count("all")
 
@@ -248,7 +248,7 @@ class HomeDashboard(models.Model):
             rec.user_total_purchase = self._sum_amount("purchase.order", user_purchase_domain, "amount_total")
             rec.user_sale_payment_due = self._sum_amount("account.move", user_sale_due_domain, "amount_residual")
             rec.user_purchase_payment_due = self._sum_amount("account.move", user_purchase_due_domain, "amount_residual")
-            rec.user_stock_alert_ordered = self._count_records("stock.warehouse.orderpoint", user_orderpoint_domain)
+            rec.user_stock_alert_ordered = self._count_records("product.product", user_low_stock_domain)
             rec.user_pending_shipment = self._count_records("stock.picking", user_shipment_domain)
             rec.user_pending_job_work = rec._pending_job_work_count("user")
 
